@@ -27,7 +27,7 @@ jobs:
 
             packages=$(echo "$response" | jq -c --arg owner "$OWNER" '
                 [.[]
-                | select(.repository.full_name == "nookyo/qubership-jaeger")
+                | select(.repository.full_name == "nookyo/qubership-monitoring-operator")
                 | { name: .name, repository: .repository.name, full_name: .repository.full_name, path: "ghcr.io/\($owner)/\(.name)" }
                 ]
             ')
