@@ -1,0 +1,62 @@
+name: Debug GHCR Packages
+
+on:
+  workflow_dispatch:
+
+jobs:
+  debug-packages:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: read
+    outputs:
+      ghcr-packages: ${{ steps.pkgs.outputs.ghcr-packages }}
+    steps:
+      - name: Show raw GHCR response
+        id: pkgs
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT_PACKAGES }}
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          api_url="https://api.github.com/users/${OWNER}/packages?package_type=container"
+          echo "Request: $api_url"
+
+          response=$(curl -sS \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "$api_url")
+
+            packages=$(echo "$response" | jq -c --arg owner "$OWNER" '
+                [.[]
+                | select(.repository.full_name == "nookyo/qubership-jaeger")
+                | { name: .name, repository: .repository.name, full_name: .repository.full_name, path: "ghcr.io/\($owner)/\(.name)" }
+                ]
+            ')
+
+            echo "ghcr-packages=$packages" >> "$GITHUB_OUTPUT"
+            echo "Raw response:"
+            echo "$packages"
+
+  security-scan:
+    needs: debug-packages
+    strategy:
+      matrix:
+        package: ${{ fromJson(needs.debug-packages.outputs.ghcr-packages) }}
+
+    name: "Run Security Scan"
+    uses: nookyo/qubership-workflow-hub/.github/workflows/re-scam.yml@main
+    with:
+      target: ${{ github.event.inputs.target || 'docker' }}
+      image: ${{ github.event.inputs.image || format('{0}:main', matrix.package.path) }}
+      only-high-critical: ${{ github.event.inputs.only-high-critical || true }}
+      trivy-scan: ${{ github.event.inputs.trivy-scan || true }}
+      grype-scan: ${{ github.event.inputs.grype-scan || true }}
+      only-fixed: ${{ github.event.inputs.only-fixed || true }}
+      continue-on-error: ${{ github.event.inputs.continue-on-error || true }}
+
+    # steps:
+    #   - name: Show GHCR packages for repository
+    #     run: |
+    #       github.repository
+    #       echo package name: ${{ matrix.package.name }}
+    #       echo package repository: ${{ matrix.package.repository }}
+    #       echo package path: ${{ matrix.package.path }}
