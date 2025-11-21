@@ -59,16 +59,10 @@ jobs:
     with:
       target: ${{ github.event.inputs.target || 'docker' }}
       image: ${{ format('{0}:main', matrix.package.path) }}
-      only-high-critical: ${{ github.event.inputs.only-high-critical || true }}
-      trivy-scan: ${{ github.event.inputs.trivy-scan || true }}
-      grype-scan: ${{ github.event.inputs.grype-scan || true }}
-      only-fixed: ${{ github.event.inputs.only-fixed || true }}
-      continue-on-error: ${{ github.event.inputs.continue-on-error || true }}
 
   security-scan-single:
     needs: debug-packages
     if: ${{ github.event.inputs.image != '' && github.event.inputs.image != null }}
-
     name: "Run Security Scan (single image)"
     uses: nookyo/qubership-workflow-hub/.github/workflows/re-scam.yml@main
     with:
