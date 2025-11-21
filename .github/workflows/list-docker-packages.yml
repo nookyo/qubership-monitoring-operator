@@ -47,7 +47,6 @@ jobs:
           echo "Raw response:"
           echo "$packages"
 
-  # Вариант 1 — крутить матрицу по всем package, если image НЕ задан
   security-scan-matrix:
     needs: debug-packages
     if: ${{ github.event.inputs.image == '' || github.event.inputs.image == null }}
@@ -66,7 +65,6 @@ jobs:
       only-fixed: ${{ github.event.inputs.only-fixed || true }}
       continue-on-error: ${{ github.event.inputs.continue-on-error || true }}
 
-  # Вариант 2 — один запуск, если image ЗАДАН
   security-scan-single:
     needs: debug-packages
     if: ${{ github.event.inputs.image != '' && github.event.inputs.image != null }}
