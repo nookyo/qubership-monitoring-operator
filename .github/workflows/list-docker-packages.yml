@@ -2,6 +2,16 @@ name: Debug GHCR Packages
 
 on:
   workflow_dispatch:
+    inputs:
+      target:
+        description: "Target type for the scan (docker, etc.)"
+        required: false
+        type: choice
+        options:
+          - docker
+          - source
+      image:
+        description: "Image to scan (overrides package selection)"
 
 jobs:
   debug-packages:
