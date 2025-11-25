@@ -99,7 +99,7 @@ jobs:
       target: ${{ inputs.target || 'docker' }}
       image: ${{ inputs.image }}
       only-high-critical: ${{ inputs.only-high-critical || true }}
-      trivy-scan: ${{ github.event.inputs.trivy-scan || true }}
+      trivy-scan: ${{ inputs.trivy-scan || true }}
       grype-scan: ${{ inputs.grype-scan || true }}
       only-fixed: ${{ inputs.only-fixed || true }}
       continue-on-error: ${{ inputs.continue-on-error || true }}
