@@ -1,6 +1,6 @@
 name: Security Scan Docker Packages
 run-name: >
-  "Security Scan #${{ github.run_number }} for ${{ github.event.inputs.image != '' && github.event.inputs.image != null && github.event.inputs.image || 'all GHCR docker images' }}"
+  "Security Scan #${{ github.run_number }} for ${{ github.event.inputs.image != '' && github.event.inputs.image != null && github.event.inputs.image || 'all repository docker images' }}"
 on:
   workflow_dispatch:
     inputs:
