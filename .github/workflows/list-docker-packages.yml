@@ -1,14 +1,9 @@
 name: Security Scan Docker Packages
 run-name: >
-  Security Scan ·
-  ${{ github.event_name == 'schedule' && 'weekly' || 'manual' }} ·
-  target=${{ inputs.target }} ·
-  ${{ inputs.target == 'docker'
-      && (inputs.image != '' && inputs.image != null
-            && format('image={0}', inputs.image)
-            || 'auto=ghcr-matrix')
-            || 'source-scan' }} ·
-            started=${{ github.run_started_at }}
+  Security Scan · ${{ github.event_name == 'schedule' && 'weekly' || 'manual' }}
+  · target=${{ inputs.target }}
+  · ${{ inputs.image || 'auto=ghcr-matrix' }}
+  · run=${{ github.run_number }}
 on:
   workflow_dispatch:
     inputs:
