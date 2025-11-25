@@ -1,5 +1,5 @@
 name: Security Scan Docker Packages
-run-name: Security Scan #${{ github.run_number }} · ${{inputs.image != '' && inputs.image || 'auto'}}
+run-name: "Security Scan #${{ github.run_number }} · ${{inputs.image != '' && inputs.image || 'auto'}}: mode=${{ inputs.target != '' && 'manual' || 'schedule' }}"
 on:
   workflow_dispatch:
     inputs:
