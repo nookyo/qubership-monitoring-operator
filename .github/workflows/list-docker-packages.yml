@@ -1,4 +1,8 @@
-name: Debug GHCR Packages
+name: Security Scan Docker Packages
+run-name: >
+  Security Scan - ${{ github.event_name == 'schedule'
+    && format('weekly-{0}', format('{0,date,EEE}', github.event.schedule))
+    || 'manual' }} - ${{ inputs.image || inputs.image || 'matrix' }}
 
 on:
   workflow_dispatch:
@@ -13,7 +17,34 @@ on:
       image:
         description: "Image to scan (overrides package selection)"
         required: false
-
+        type: string
+      only-high-critical:
+        description: "Only report high and critical vulnerabilities"
+        required: false
+        type: boolean
+        default: true
+      trivy-scan:
+        description: "Enable Trivy scan"
+        required: false
+        type: boolean
+        default: true
+      grype-scan:
+        description: "Enable Grype scan"
+        required: false
+        type: boolean
+        default: true
+      only-fixed:
+        description: "Only report fixed vulnerabilities"
+        required: false
+        type: boolean
+        default: true
+      continue-on-error:
+        description: "Continue workflow on error"
+        required: false
+        type: boolean
+        default: true
+  schedule:
+    - cron: "0 0 * * 0" # Weekly on Sundays at midnight
 jobs:
   debug-packages:
     runs-on: ubuntu-latest
@@ -66,13 +97,13 @@ jobs:
     name: "Run Security Scan (single image)"
     uses: nookyo/qubership-workflow-hub/.github/workflows/re-scam.yml@main
     with:
-      target: ${{ github.event.inputs.target || 'docker' }}
-      image: ${{ github.event.inputs.image }}
-      only-high-critical: ${{ github.event.inputs.only-high-critical || true }}
+      target: ${{ inputs.target || 'docker' }}
+      image: ${{ inputs.image }}
+      only-high-critical: ${{ inputs.only-high-critical || true }}
       trivy-scan: ${{ github.event.inputs.trivy-scan || true }}
-      grype-scan: ${{ github.event.inputs.grype-scan || true }}
-      only-fixed: ${{ github.event.inputs.only-fixed || true }}
-      continue-on-error: ${{ github.event.inputs.continue-on-error || true }}
+      grype-scan: ${{ inputs.grype-scan || true }}
+      only-fixed: ${{ inputs.only-fixed || true }}
+      continue-on-error: ${{ inputs.continue-on-error || true }}
 
     # steps:
     #   - name: Show GHCR packages for repository
