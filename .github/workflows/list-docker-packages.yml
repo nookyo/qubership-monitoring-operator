@@ -3,7 +3,6 @@ run-name: >
   Security Scan - ${{ github.event_name == 'schedule'
     && format('weekly-{0}', format('{0,date,EEE}', github.event.schedule))
     || 'manual' }} - ${{ inputs.image || inputs.image || 'matrix' }}
-
 on:
   workflow_dispatch:
     inputs:
@@ -88,7 +87,7 @@ jobs:
         package: ${{ fromJson(needs.debug-packages.outputs.ghcr-packages) }}
 
     name: "Run Security Scan (matrix)"
-    uses: nookyo/qubership-workflow-hub/.github/workflows/re-scam.yml@main
+    uses: netcracker/qubership-workflow-hub/.github/workflows/re-security-scan.yml@main
     with:
       target: ${{ github.event.inputs.target || 'docker' }}
       image: ${{ format('{0}:main', matrix.package.path) }}
@@ -97,7 +96,7 @@ jobs:
     needs: debug-packages
     if: ${{ github.event.inputs.image != '' && github.event.inputs.image != null }}
     name: "Run Security Scan (single image)"
-    uses: nookyo/qubership-workflow-hub/.github/workflows/re-scam.yml@main
+    uses: netcracker/qubership-workflow-hub/.github/workflows/re-security-scan.yml@main
     with:
       target: ${{ inputs.target || 'docker' }}
       image: ${{ inputs.image }}
@@ -106,11 +105,3 @@ jobs:
       grype-scan: ${{ inputs.grype-scan || true }}
       only-fixed: ${{ inputs.only-fixed || true }}
       continue-on-error: ${{ inputs.continue-on-error || true }}
-
-    # steps:
-    #   - name: Show GHCR packages for repository
-    #     run: |
-    #       github.repository
-    #       echo package name: ${{ matrix.package.name }}
-    #       echo package repository: ${{ matrix.package.repository }}
-    #       echo package path: ${{ matrix.package.path }}
