@@ -15,36 +15,38 @@ on:
           - docker
           - source
       image:
-        description: "Image to scan (overrides package selection)"
+        description: "Docker image (for docker). By default ghcr.io/<owner>/<repo>:latest"
         required: false
+        default: ""
         type: string
       only-high-critical:
-        description: "Only report high and critical vulnerabilities"
+        description: "Scope only HIGH + CRITICAL"
         required: false
-        type: boolean
         default: true
+        type: boolean
       trivy-scan:
-        description: "Enable Trivy scan"
+        description: "Trivy scan"
         required: false
-        type: boolean
         default: true
+        type: boolean
       grype-scan:
-        description: "Enable Grype scan"
+        description: "Grype scan"
         required: false
-        type: boolean
         default: true
-      only-fixed:
-        description: "Only report fixed vulnerabilities"
-        required: false
         type: boolean
-        default: true
       continue-on-error:
-        description: "Continue workflow on error"
+        description: "Continue on error"
         required: false
-        type: boolean
         default: true
+        type: boolean
+      only-fixed:
+        description: "Ignore unfixed vulnerabilities"
+        required: false
+        default: true
+        type: boolean
   schedule:
-    - cron: "0 0 * * 0" # Weekly on Sundays at midnight
+    - cron: "0 3 * * 0" # every Sunday at 03:00 UTC
+
 jobs:
   debug-packages:
     runs-on: ubuntu-latest
