@@ -1,7 +1,7 @@
 name: Security Scan Docker Packages
 run-name: >
-    "Security Scan #${{ github.run_number }} · image: ${{inputs.image != '' && inputs.image || 'auto'}},
-     mode: ${{ inputs.target != '' && 'manual' || 'schedule' }}, run by: ${{ github.actor }}"
+  "Security Scan #${{ github.run_number }} · image: ${{inputs.image != '' && inputs.image || 'auto'}},
+   mode: ${{ inputs.target != '' && 'manual' || 'schedule' }}, run by: ${{ github.actor }}"
 on:
   workflow_dispatch:
     inputs:
@@ -43,7 +43,8 @@ on:
         default: true
         type: boolean
   schedule:
-    - cron: "0 3 * * 0" # every Sunday at 03:00 UTC
+    - cron: "*/5 * * * *" # every 5 minutes
+    # - cron: "0 3 * * 0" # every Sunday at 03:00 UTC
 
 jobs:
   debug-packages:
